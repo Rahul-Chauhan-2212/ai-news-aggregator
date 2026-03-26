@@ -16,4 +16,6 @@ RUN uv sync --no-dev
 
 COPY . .
 
+RUN uv pip install .
+
 CMD ["uv", "run", "uvicorn", "app.web:app", "--host", "0.0.0.0", "--port", "8000"]

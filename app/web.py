@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Form, HTTPException, Request
+from fastapi.concurrency import asynccontextmanager
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -9,9 +10,26 @@ from app.database.repository import (
     subscribe_user,
     unsubscribe_user,
 )
+from app.database.tables_create import init_db
+from app.jobs.daily_pipeline import run_pipeline
 from app.services.email_service import send_email_to_user
 
-app = FastAPI(title="AI News Aggregator")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # startup
+    init_db()
+    print("DB initialized")
+    
+    print("Running startup tasks...")
+    run_pipeline()  # Run the daily pipeline on startup to ensure we have data and send emails if needed
+
+    yield
+
+    # shutdown (optional)
+    print("App shutting down")
+
+app = FastAPI(title="AI News Aggregator", lifespan=lifespan)
 
 # Mount static files and templates
 app.mount("/static", StaticFiles(directory="app/static"), name="static")

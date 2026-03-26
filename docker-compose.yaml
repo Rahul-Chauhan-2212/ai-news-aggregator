@@ -4,8 +4,14 @@ services:
   app:
     build: .
     container_name: ai-news-app
-    env_file:
-      - .env
+    environment:
+      DATABASE_URL: postgresql://user:password@db:5432/newsdb
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      EMAIL: ${EMAIL}
+      EMAIL_APP_PASSWORD: ${EMAIL_APP_PASSWORD}
+      AI_PROVIDER: openai
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      OLLAMA_URL: ${OLLAMA_URL}
     ports:
       - "8000:8000"
     depends_on:
