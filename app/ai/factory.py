@@ -9,7 +9,7 @@ from app.config.settings import ANTHROPIC_API_KEY, OLLAMA_URL, OPENAI_API_KEY
 def get_ai_provider():
 
     provider = os.getenv("AI_PROVIDER", "openai").lower()
-    
+
     print(f"Using AI provider: {provider}")
 
     if provider == "openai":

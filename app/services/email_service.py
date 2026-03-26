@@ -1,7 +1,11 @@
 import smtplib
 from email.mime.text import MIMEText
 from app.config.settings import EMAIL, EMAIL_APP_PASSWORD
-from app.database.repository import get_active_subscribers, get_summarized, update_last_email_sent
+from app.database.repository import (
+    get_active_subscribers,
+    get_summarized,
+    update_last_email_sent,
+)
 
 
 def send_email_to_users():

@@ -2,6 +2,7 @@ from app.database.repository import get_unsummarized, update_summary
 from app.agents.summarizer_agent import SummarizerAgent
 from app.ai.factory import get_ai_provider
 
+
 def run_processing():
     agent = SummarizerAgent(get_ai_provider())
     articles = get_unsummarized()

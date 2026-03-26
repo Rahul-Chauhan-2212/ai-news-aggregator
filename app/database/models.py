@@ -4,6 +4,7 @@ from datetime import datetime
 
 Base = declarative_base()
 
+
 class Article(Base):
     __tablename__ = "articles"
 
@@ -15,8 +16,11 @@ class Article(Base):
     source = Column(String)
     published_date = Column(DateTime)  # When article was published
     created_at = Column(DateTime, default=datetime.utcnow)  # When record was created
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)  # When record was last updated
+    updated_at = Column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )  # When record was last updated
     updated_date = Column(DateTime)  # When article content was last updated
+
 
 class User(Base):
     __tablename__ = "users"

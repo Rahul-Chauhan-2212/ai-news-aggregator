@@ -139,9 +139,11 @@ async def get_news_api():
                 "title": article.title,
                 "summary": article.summary,
                 "url": article.url,
-                "published_date": article.published_date.isoformat()
-                if article.published_date
-                else None,
+                "published_date": (
+                    article.published_date.isoformat()
+                    if article.published_date
+                    else None
+                ),
                 "source": article.source,
             }
             for article in articles

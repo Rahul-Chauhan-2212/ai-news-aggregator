@@ -12,12 +12,8 @@ class OllamaProvider(AIProvider):
         try:
             res = requests.post(
                 self.base_url,
-                json={
-                    "model": self.model,
-                    "prompt": prompt,
-                    "stream": False
-                },
-                timeout=30
+                json={"model": self.model, "prompt": prompt, "stream": False},
+                timeout=30,
             )
 
             data = res.json()
@@ -28,15 +24,11 @@ class OllamaProvider(AIProvider):
             return data.get("response", "").strip()
 
         except Exception as e:
-            print(f"Ollama error: {e}") 
+            print(f"Ollama error: {e}")
             return None
 
     def summarize(self, text: str) -> str:
-        return self._call_ollama(
-            f"Summarize:\n{text}"
-        )
+        return self._call_ollama(f"Summarize:\n{text}")
 
     def classify(self, text: str) -> str:
-        return self._call_ollama(
-            f"Classify:\n{text}"
-        )
+        return self._call_ollama(f"Classify:\n{text}")

@@ -1,6 +1,7 @@
 import anthropic
 from app.ai.base import AIProvider
 
+
 class AnthropicProvider(AIProvider):
 
     def __init__(self, api_key: str, model="claude-3-haiku-20240307"):
@@ -11,7 +12,7 @@ class AnthropicProvider(AIProvider):
         res = self.client.messages.create(
             model=self.model,
             max_tokens=200,
-            messages=[{"role": "user", "content": f"Summarize:\n{text}"}]
+            messages=[{"role": "user", "content": f"Summarize:\n{text}"}],
         )
         return res.content[0].text
 
@@ -19,6 +20,6 @@ class AnthropicProvider(AIProvider):
         res = self.client.messages.create(
             model=self.model,
             max_tokens=100,
-            messages=[{"role": "user", "content": f"Classify:\n{text}"}]
+            messages=[{"role": "user", "content": f"Classify:\n{text}"}],
         )
         return res.content[0].text
