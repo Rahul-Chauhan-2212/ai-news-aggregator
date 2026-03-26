@@ -41,5 +41,4 @@ DEPLOYMENT.md
 .DS_Store
 Thumbs.db
 
-docker/
 *.log
