@@ -5,6 +5,9 @@ description = "AI news aggregator with model-agnostic agents, scraping, summariz
 readme = "README.md"
 requires-python = ">=3.12"
 
+[tool.setuptools.packages.find]
+include = ["app*"]
+
 dependencies = [
     # Core
     "feedparser>=6.0.10",
@@ -24,6 +27,12 @@ dependencies = [
 
     # Scheduler
     "apscheduler>=3.10.4",
+
+    # Web Framework
+    "fastapi>=0.104.1",
+    "uvicorn>=0.24.0",
+    "jinja2>=3.1.2",
+    "python-multipart>=0.0.6",
 ]
 
 [project.optional-dependencies]

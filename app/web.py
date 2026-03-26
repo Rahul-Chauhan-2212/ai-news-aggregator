@@ -1,0 +1,110 @@
+from fastapi import FastAPI, Form, HTTPException, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
+from app.database.repository import (
+    get_active_subscribers,
+    get_summarized,
+    subscribe_user,
+    unsubscribe_user,
+)
+from app.services.email_service import send_email_to_user
+
+app = FastAPI(title="AI News Aggregator")
+
+# Mount static files and templates
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+templates = Jinja2Templates(directory="app/templates")
+
+
+@app.get("/", response_class=HTMLResponse)
+async def home(request: Request):
+    """Display the latest AI news"""
+    try:
+        articles = get_summarized()
+        return templates.TemplateResponse(request, "index.html", {"articles": articles})
+    except Exception as e:
+        import traceback
+
+        return templates.TemplateResponse(
+            request,
+            "error.html",
+            {
+                "error": str(e),
+                "traceback": traceback.format_exc(),
+            },
+        )
+
+
+@app.get("/subscribe", response_class=HTMLResponse)
+async def subscribe_form(request: Request):
+    """Show subscription form"""
+    return templates.TemplateResponse(request, "subscribe.html", {})
+
+
+@app.post("/subscribe")
+async def subscribe(email: str = Form(...)):
+    """Handle email subscription"""
+    try:
+        subscribe_user(email)
+        return {"message": f"Successfully subscribed {email}!"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/unsubscribe")
+async def unsubscribe(email: str = Form(...)):
+    """Handle email unsubscription"""
+    try:
+        unsubscribe_user(email)
+        return {"message": f"Successfully unsubscribed {email}!"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.get("/admin/subscribers")
+async def get_subscribers():
+    """Get list of active subscribers (for admin)"""
+    subscribers = get_active_subscribers()
+    return {"subscribers": [user.email for user in subscribers]}
+
+
+@app.post("/admin/send-newsletter")
+async def send_newsletter():
+    """Send newsletter to all subscribers"""
+    subscribers = get_active_subscribers()
+    articles = get_summarized()
+
+    if not articles:
+        return {"message": "No summarized articles available"}
+
+    sent_count = 0
+    for user in subscribers:
+        try:
+            send_email_to_user(user.email, articles)
+            sent_count += 1
+        except Exception as e:
+            print(f"Failed to send to {user.email}: {e}")
+
+    return {"message": f"Newsletter sent to {sent_count} subscribers"}
+
+
+@app.get("/api/news")
+async def get_news_api():
+    """API endpoint to get news data"""
+    articles = get_summarized()
+    return {
+        "articles": [
+            {
+                "title": article.title,
+                "summary": article.summary,
+                "url": article.url,
+                "published_date": article.published_date.isoformat()
+                if article.published_date
+                else None,
+                "source": article.source,
+            }
+            for article in articles
+        ]
+    }
