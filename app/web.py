@@ -11,8 +11,9 @@ from app.database.repository import (
     unsubscribe_user,
 )
 from app.database.tables_create import init_db
-from app.jobs.daily_pipeline import run_pipeline
 from app.services.email_service import send_email_to_user
+from app.services.ingestion_service import run_ingestion
+from app.services.processing_service import run_processing
 
 
 @asynccontextmanager
@@ -22,7 +23,9 @@ async def lifespan(app: FastAPI):
     print("DB initialized")
 
     print("Running startup tasks...")
-    run_pipeline()  # Run the daily pipeline on startup to ensure we have data and send emails if needed
+    run_ingestion()
+    run_processing()
+    print("Completed startup tasks...")
 
     yield
 

@@ -23,7 +23,7 @@ class RSSScraper:
                     "title": entry.title,
                     "url": entry.link,
                     "content": entry.get("summary", ""),
-                    "source": "rss",
+                    "source": feed.feed.get("title", "RSS Feed"),
                     "published_date": published_date,
                     "updated_date": updated_date
                 })
