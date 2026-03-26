@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Form, HTTPException, Request
+from fastapi import FastAPI, Form, Request
 from fastapi.concurrency import asynccontextmanager
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -20,7 +20,7 @@ async def lifespan(app: FastAPI):
     # startup
     init_db()
     print("DB initialized")
-    
+
     print("Running startup tasks...")
     run_pipeline()  # Run the daily pipeline on startup to ensure we have data and send emails if needed
 
@@ -28,6 +28,7 @@ async def lifespan(app: FastAPI):
 
     # shutdown (optional)
     print("App shutting down")
+
 
 app = FastAPI(title="AI News Aggregator", lifespan=lifespan)
 
@@ -61,24 +62,41 @@ async def subscribe_form(request: Request):
     return templates.TemplateResponse(request, "subscribe.html", {})
 
 
-@app.post("/subscribe")
-async def subscribe(email: str = Form(...)):
-    """Handle email subscription"""
+@app.post("/subscribe", response_class=HTMLResponse)
+async def subscribe(request: Request, email: str = Form(...)):
     try:
         subscribe_user(email)
-        return {"message": f"Successfully subscribed {email}!"}
+
+        return templates.TemplateResponse(
+            request,
+            "subscribe.html",
+            {"message": f"Successfully subscribed {email}!", "success": True},
+        )
+
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return templates.TemplateResponse(
+            request,
+            "subscribe.html",
+            {"message": str(e), "success": False},
+        )
 
 
-@app.post("/unsubscribe")
-async def unsubscribe(email: str = Form(...)):
+@app.post("/unsubscribe", response_class=HTMLResponse)
+async def unsubscribe(request: Request, email: str = Form(...)):
     """Handle email unsubscription"""
     try:
         unsubscribe_user(email)
-        return {"message": f"Successfully unsubscribed {email}!"}
+        return templates.TemplateResponse(
+            request,
+            "subscribe.html",
+            {"message": f"Successfully unsubscribed {email}!", "success": True},
+        )
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return templates.TemplateResponse(
+            request,
+            "s.html",
+            {"message": str(e), "success": False},
+        )
 
 
 @app.get("/admin/subscribers")

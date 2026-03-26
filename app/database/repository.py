@@ -2,6 +2,7 @@ from app.database.connection import SessionLocal
 from app.database.models import Article, User
 from datetime import datetime
 
+
 def save_article(data):
     db = SessionLocal()
 
@@ -9,10 +10,11 @@ def save_article(data):
         db.close()
         return
 
-    article = Article(**data)  # Now includes updated_at (auto-handled)
+    article = Article(**data)
     db.add(article)
     db.commit()
     db.close()
+
 
 def get_unsummarized():
     db = SessionLocal()
@@ -20,18 +22,21 @@ def get_unsummarized():
     db.close()
     return res
 
+
 def get_summarized():
     db = SessionLocal()
     res = db.query(Article).filter(Article.summary != None).all()
     db.close()
     return res
 
+
 def update_summary(article_id, summary):
     db = SessionLocal()
     article = db.get(Article, article_id)
-    article.summary = summary  # This will trigger updated_at auto-update
+    article.summary = summary
     db.commit()
     db.close()
+
 
 # User management functions
 def subscribe_user(email):
@@ -47,6 +52,7 @@ def subscribe_user(email):
     db.close()
     return user
 
+
 def unsubscribe_user(email):
     db = SessionLocal()
     user = db.query(User).filter_by(email=email).first()
@@ -55,11 +61,13 @@ def unsubscribe_user(email):
         db.commit()
     db.close()
 
+
 def get_active_subscribers():
     db = SessionLocal()
-    res = db.query(User).filter(User.is_active == True).all()
+    res = db.query(User).filter(User.is_active).all()
     db.close()
     return res
+
 
 def update_last_email_sent(email):
     db = SessionLocal()
