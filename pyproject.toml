@@ -1,7 +1,52 @@
 [project]
 name = "ai-news-aggregator"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.2.0"
+description = "AI news aggregator with model-agnostic agents, scraping, summarization, and email digest"
 readme = "README.md"
-requires-python = ">=3.13"
-dependencies = []
+requires-python = ">=3.12"
+
+dependencies = [
+    # Core
+    "feedparser>=6.0.10",
+    "requests>=2.31.0",
+    "beautifulsoup4>=4.12.3",
+
+    # Database
+    "sqlalchemy>=2.0.25",
+    "psycopg2-binary>=2.9.9",
+
+    # Config
+    "python-dotenv>=1.0.1",
+
+    # AI Providers
+    "openai>=1.30.0",
+    "anthropic>=0.25.0",
+
+    # Scheduler
+    "apscheduler>=3.10.4",
+]
+
+[project.optional-dependencies]
+# Local LLM support (optional)
+local = [
+    "httpx>=0.27.0"
+]
+
+# Dev tools
+dev = [
+    "pytest>=8.0.0",
+    "black>=24.0.0",
+    "ruff>=0.4.0",
+]
+
+[project.scripts]
+run-app = "app.main:run_pipeline"
+run-scheduler = "app.jobs.scheduler:scheduler.start"
+
+[tool.uv]
+# uv-specific config
+dev-dependencies = [
+    "pytest>=8.0.0",
+    "black>=24.0.0",
+    "ruff>=0.4.0"
+]
